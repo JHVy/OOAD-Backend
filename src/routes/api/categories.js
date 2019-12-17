@@ -1,60 +1,56 @@
-const express = require('express')
+import express from 'express'
 const router = express.Router()
-const auth = require('../../middleware/auth')
-const mongoose = require('mongoose')
+import Category from '../../models/Category'
+import auth from '../../middleware/auth'
+import role from '../../middleware/role'
+import Role from '../../Role'
 
-//Category Model
-const Category = require('../../models/Category')
-
-//@route GET /category/:id
-//@desc  Get category by ID
-//@access Private
-router.get('/:id', auth, (req, res) => {
-  Category.findById(req.params.id)
+router.get('/:id', auth, role(Role.categoryManagement), ({ params }, res) => {
+  Category.findById(params.id)
     .then(category => {
       res.json(category)
-      console.log(category)
     })
     .catch(err => res.json(err))
 })
 
-//@route PUT /category/:id
-//@desc  Update category by ID
-//@access Private
-router.put('/:id', auth, (req, res) => {
-  const newCategory = {
-    name: req.body.name,
-    _id: req.body._id
+router.put(
+  '/:id',
+  auth,
+  role(Role.categoryManagement),
+  ({ params, body }, res) => {
+    const newCategory = {
+      name: body.name,
+      _id: params.id
+    }
+    Category.findByIdAndUpdate(params.id, newCategory, { new: true })
+      .then(category => {
+        res.json(category)
+      })
+      .catch(err => res.json(err))
   }
-  Category.findByIdAndUpdate(req.body._id, newCategory, { new: true })
-    .then(category => {
-      res.json(category)
-    })
-    .catch(err => res.json(err))
-})
+)
 
-//@route GET /category
-//@desc  Get All categories
-//@access Private
-router.get('/:objects/:page/:query', auth, (req, res) => {
-  const { objects, page, query } = req.params
-  let newQuery = ''
-  if (query === 'undefined') newQuery = ''
-  else newQuery = query
+router.get(
+  '/:objects/:page/:query',
+  auth,
+  role(Role.categoryManagement),
+  ({ params }, res) => {
+    const { objects, page, query } = params
+    let newQuery = ''
+    if (query === 'undefined') newQuery = ''
+    else newQuery = query
 
-  Category.find({ name: { $regex: newQuery, $options: 'i' } })
-    .limit(Number(objects))
-    .skip(objects * (page - 1))
-    .sort({ createAt: -1 })
-    .then(category => res.json(category))
-    .catch(err => res.json(err))
-})
+    Category.find({ name: { $regex: newQuery, $options: 'i' } })
+      .limit(Number(objects))
+      .skip(objects * (page - 1))
+      .sort({ createAt: -1 })
+      .then(category => res.json(category))
+      .catch(err => res.json(err))
+  }
+)
 
-//@route GET /category
-//@desc  Get All categories
-//@access Private
-router.get('/count/:query', (req, res) => {
-  const { query } = req.params
+router.get('/count/:query', ({ params }, res) => {
+  const { query } = params
   let newQuery = ''
   if (query === 'undefined') newQuery = ''
   else newQuery = query
@@ -65,14 +61,11 @@ router.get('/count/:query', (req, res) => {
     .catch(err => res.json(err))
 })
 
-//@route POST /category
-//@desc  Create a category
-//@access Private
-router.post('/', auth, (req, res) => {
+router.post('/', auth, role(Role.categoryManagement), ({ body }, res) => {
   const newCategory = new Category({
-    _id: req.body._id,
-    createAt: req.body.createAt,
-    name: req.body.name
+    _id: body._id,
+    createAt: body.createAt,
+    name: body.name
   })
 
   newCategory
@@ -81,10 +74,15 @@ router.post('/', auth, (req, res) => {
     .catch(err => res.json(err))
 })
 
-router.delete('/:id', auth, (req, res) => {
-  Category.findByIdAndDelete(req.params.id)
-    .then(item => res.json(item))
-    .catch(err => res.json(err))
-})
+router.delete(
+  '/:id',
+  auth,
+  role(Role.categoryManagement),
+  ({ params }, res) => {
+    Category.findByIdAndDelete(params.id)
+      .then(item => res.json(item))
+      .catch(err => res.json(err))
+  }
+)
 
-module.exports = router
+export default router

@@ -2,8 +2,11 @@ import express from 'express'
 const router = express.Router()
 
 import PaySlip from '../../models/PaySlip'
+import auth from '../../middleware/auth'
+import role from '../../middleware/role'
+import Role from '../../Role'
 
-router.get('/:id', ({ params }, res) => {
+router.get('/:id', auth, role(Role.payslipManagement), ({ params }, res) => {
   PaySlip.findById(params.id)
     .then(payslip => {
       res.json(payslip)
@@ -11,7 +14,7 @@ router.get('/:id', ({ params }, res) => {
     .catch(err => res.json(err))
 })
 
-router.get('', (req, res) => {
+router.get('/', auth, role(Role.payslipManagement), (req, res) => {
   PaySlip.find()
     .then(payslip => {
       res.json(payslip)
@@ -19,35 +22,45 @@ router.get('', (req, res) => {
     .catch(err => res.json(err))
 })
 
-router.put('/:id', ({ body, params }, res) => {
-  const { idMember, idSupplier, createddate, totalAmt } = body
-  const newPaySlip = {
-    idMember,
-    idSupplier,
-    createddate,
-    totalAmt,
-    _id: params._id
+router.put(
+  '/:id',
+  auth,
+  role(Role.payslipManagement),
+  ({ body, params }, res) => {
+    const { idUser, idSupplier, createddate, totalAmt } = body
+    const newPaySlip = {
+      idUser,
+      idSupplier,
+      createddate,
+      totalAmt,
+      _id: params.id
+    }
+    PaySlip.findByIdAndUpdate(params.id, newPaySlip, { new: true })
+      .then(payslip => {
+        res.json(payslip)
+      })
+      .catch(err => res.json(err))
   }
-  PaySlip.findByIdAndUpdate(params._id, newPaySlip, { new: true })
-    .then(payslip => {
-      res.json(payslip)
-    })
-    .catch(err => res.json(err))
-})
+)
 
-router.get('/:objects/:page/:query', ({ params }, res) => {
-  const { objects, page, query } = params
-  let newQuery = ''
-  if (query === 'undefined') newQuery = ''
-  else newQuery = query
+router.get(
+  '/:objects/:page/:query',
+  auth,
+  role(Role.payslipManagement),
+  ({ params }, res) => {
+    const { objects, page, query } = params
+    let newQuery = ''
+    if (query === 'undefined') newQuery = ''
+    else newQuery = query
 
-  PaySlip.find({ idMember: { $regex: newQuery, $options: 'i' } })
-    .limit(Number(objects))
-    .skip(objects * (page - 1))
-    .sort({ createddate: -1 })
-    .then(payslip => res.json(payslip))
-    .catch(err => res.json(err))
-})
+    PaySlip.find({ idMember: { $regex: newQuery, $options: 'i' } })
+      .limit(Number(objects))
+      .skip(objects * (page - 1))
+      .sort({ createddate: -1 })
+      .then(payslip => res.json(payslip))
+      .catch(err => res.json(err))
+  }
+)
 
 router.get('/count/:query', ({ params }, res) => {
   const { query } = params
@@ -62,11 +75,11 @@ router.get('/count/:query', ({ params }, res) => {
     .catch(err => res.json(err))
 })
 
-router.post('/', ({ body }, res) => {
-  const { _id, idMember, idSupplier, createddate, totalAmt } = body
+router.post('/', auth, role(Role.payslipManagement), ({ body }, res) => {
+  const { idUser, idSupplier, createddate, totalAmt, _id } = body
   const newPaySlip = new PaySlip({
     _id,
-    idMember,
+    idUser,
     idSupplier,
     createddate,
     totalAmt
@@ -78,7 +91,7 @@ router.post('/', ({ body }, res) => {
     .catch(err => res.json(err))
 })
 
-router.delete('/:id', ({ params }, res) => {
+router.delete('/:id', auth, role(Role.payslipManagement), ({ params }, res) => {
   PaySlip.findByIdAndDelete(params.id)
     .then(payslip => res.json(payslip))
     .catch(err => res.json(err))
