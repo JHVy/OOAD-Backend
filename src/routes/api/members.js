@@ -1,32 +1,32 @@
-const express = require("express");
-const auth = require("../../middleware/auth");
+import express from "express";
+import auth from "../../middleware/auth";
 const router = express.Router();
 
 //Member Model
-const Member = require("../../models/Member");
+import Member from "../../models/Member";
 
 //search theo query, them duong dan /api/member/search/ trong file server
-router.get("/search/:query", (req, res) => {
-  const { query } = req.params;
+router.get("/search/:query", ({ params }, res) => {
+  const { query } = params;
   let newQuery = "";
   if (query === "undefined") newQuery = "";
   else newQuery = query;
 
   Member.find({ name: { $regex: newQuery, $options: "i" } })
     .sort({ createAt: -1 }) //desc = -1 acs = 1
-    .then(member => res.json(member)) //return lại item 
+    .then(member => res.json(member)) //return lại item
     .catch(err => res.json(err)); //Catch lỗi rồi return ra;
 });
 
-router.get("/:id", auth, (req, res) => {
-  Member.findById(req.params.id)
+router.get("/:id", auth, ({ params }, res) => {
+  Member.findById(params.id)
     .then(member => {
       res.json(member);
     }) //return lại item
     .catch(err => res.json(err)); //Catch lỗi rồi return ra;
 });
 
-router.get('', auth, (req, res) => {
+router.get("/", auth, (req, res) => {
   Member.find()
     .then(member => {
       res.json(member);
@@ -34,23 +34,23 @@ router.get('', auth, (req, res) => {
     .catch(err => res.json(err)); //Catch lỗi rồi return ra;
 });
 
-router.put("/:id", auth, (req, res) => {
+router.put("/:id", auth, ({ body, params }, res) => {
+  const { name, phone, point } = body;
   const newMember = {
-    name: req.body.name,
-    phone: req.body.phone,
-    point: req.body.point,
-    _id: req.body._id
+    name,
+    phone,
+    point,
+    _id: params.id
   };
-  Member.findByIdAndUpdate(req.body._id, newMember, { new: true })
+  Member.findByIdAndUpdate(params.id, newMember, { new: true })
     .then(member => {
       res.json(member);
     }) //return lại item
     .catch(err => res.json(err)); //Catch lỗi rồi return ra;
 });
 
-
-router.get("/:objects/:page/:query", auth, (req, res) => {
-  const { objects, page, query } = req.params;
+router.get("/:objects/:page/:query", auth, ({ params }, res) => {
+  const { objects, page, query } = params;
   let newQuery = "";
   if (query === "undefined") newQuery = "";
   else newQuery = query;
@@ -63,9 +63,8 @@ router.get("/:objects/:page/:query", auth, (req, res) => {
     .catch(err => res.json(err)); //Catch lỗi rồi return ra;
 });
 
-
-router.get("/count/:query", (req, res) => {
-  const { query } = req.params;
+router.get("/count/:query", ({ params }, res) => {
+  const { query } = params;
   let newQuery = "";
   if (query === "undefined") newQuery = "";
   else newQuery = query;
@@ -80,12 +79,13 @@ router.get("/count/:query", (req, res) => {
 //@route POST /member   (dùng phương thức POST và route là /member)
 //@desc  Create a member  (miểu tả APi làm gì)
 //@access Public            (access hiện tại là public vì Trung chưa tạo authentication)
-router.post("/", auth, (req, res) => {
+router.post("/", auth, ({ body }, res) => {
+  const { _id, name, phone, point } = body;
   const newMember = new Member({
-    _id: req.body._id,
-    name: req.body.name,
-    phone: req.body.phone,
-    point: req.body.point,
+    _id: _id,
+    name: name,
+    phone: phone,
+    point: point
   });
 
   newMember
@@ -97,22 +97,9 @@ router.post("/", auth, (req, res) => {
 //@route DELETE /member/:id (dùng phương thức POST và route là /member/:id)
 //@desc  Delete a member      (miêu tả API làm gì)
 //@access Public                (access hiện tại là public vì Trung chưa tạo authentication)
-router.delete("/:id", auth, (req, res) => {
-  // Có 2 cách:
-  //          + Tìm ra bằng "findById" rồi "remove"
-  //          + Tìm và xóa bằng "findByIdAndDelete"
-  // Cách 2 là best practice
-
-  // ----------------Cách 1------------------
-  //   Item.findById(req.params.id)
-  //     .then(item => item.remove().then(() => res.json({ success: true })))
-  //     .catch(err => res.status(404).json({ success: false }));
-  // ----------------Cách 2------------------
-  console.log(req.params.id);
-
-  Member.findByIdAndDelete(req.params.id)
+router.delete("/:id", auth, ({ params }, res) => {
+  Member.findByIdAndDelete(params.id)
     .then(item => res.json(item)) //Return lại item đã xóa
     .catch(err => res.json(err)); //Catch lỗi rồi return ra
 });
-
-module.exports = router;
+export default router;
