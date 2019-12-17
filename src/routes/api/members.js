@@ -26,7 +26,7 @@ router.get("/:id", auth, ({ params }, res) => {
     .catch(err => res.json(err)); //Catch lỗi rồi return ra;
 });
 
-router.get("/", auth, (req, res) => {
+router.get("", auth, (req, res) => {
   Member.find()
     .then(member => {
       res.json(member);

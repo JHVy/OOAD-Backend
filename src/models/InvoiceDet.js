@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 const Schema = mongoose.Schema;
 
 //Create Schema
@@ -25,9 +25,9 @@ const InvoiceDetSchema = new Schema({
   },
   discount: {
     type: Number,
-    required: false,
+    required: false
   }
 });
 
-module.exports = InvoiceDet = mongoose.model("invoicedet", InvoiceDetSchema);
-
+const InvoiceDet = mongoose.model("invoicedet", InvoiceDetSchema);
+export default InvoiceDet;

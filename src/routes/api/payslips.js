@@ -1,44 +1,42 @@
-const express = require("express");
+import express from "express";
 const router = express.Router();
 
-//PaySlip Model
-const PaySlip = require("../../models/PaySlip");
+import PaySlip from "../../models/PaySlip";
 
-router.get("/:id", (req, res) => {
-  PaySlip.findById(req.params.id)
+router.get("/:id", ({ params }, res) => {
+  PaySlip.findById(params.id)
     .then(payslip => {
       res.json(payslip);
-    }) //return lại item
-    .catch(err => res.json(err)); //Catch lỗi rồi return ra;
+    })
+    .catch(err => res.json(err));
 });
 
-router.get('', (req, res) => {
+router.get("", (req, res) => {
   PaySlip.find()
     .then(payslip => {
       res.json(payslip);
-    }) //return lại item
-    .catch(err => res.json(err)); //Catch lỗi rồi return ra;
+    })
+    .catch(err => res.json(err));
 });
 
-router.put("/:id", (req, res) => {
-
+router.put("/:id", ({ body, params }, res) => {
+  const { idMember, idSupplier, createddate, totalAmt } = body;
   const newPaySlip = {
-    idMember: req.body.idMember,
-    idSupplier: req.body.idSupplier,
-    createddate: req.body.createddate,
-    totalAmt: req.body.totalAmt,
-    _id: req.body._id
+    idMember,
+    idSupplier,
+    createddate,
+    totalAmt,
+    _id: params._id
   };
-  PaySlip.findByIdAndUpdate(req.body._id, newPaySlip, { new: true })
+  PaySlip.findByIdAndUpdate(params._id, newPaySlip, { new: true })
     .then(payslip => {
       res.json(payslip);
-    }) //return lại item
-    .catch(err => res.json(err)); //Catch lỗi rồi return ra;
+    })
+    .catch(err => res.json(err));
 });
 
-
-router.get("/:objects/:page/:query", (req, res) => {
-  const { objects, page, query } = req.params;
+router.get("/:objects/:page/:query", ({ params }, res) => {
+  const { objects, page, query } = params;
   let newQuery = "";
   if (query === "undefined") newQuery = "";
   else newQuery = query;
@@ -46,56 +44,44 @@ router.get("/:objects/:page/:query", (req, res) => {
   PaySlip.find({ idMember: { $regex: newQuery, $options: "i" } })
     .limit(Number(objects))
     .skip(objects * (page - 1))
-    .sort({ createddate: -1 }) //desc = -1 acs = 1
-    .then(payslip => res.json(payslip)) //return lại item
-    .catch(err => res.json(err)); //Catch lỗi rồi return ra;
+    .sort({ createddate: -1 })
+    .then(payslip => res.json(payslip))
+    .catch(err => res.json(err));
 });
 
-
-router.get("/count/:query", (req, res) => {
-  const { query } = req.params;
+router.get("/count/:query", ({ params }, res) => {
+  const { query } = params;
   let newQuery = "";
   if (query === "undefined") newQuery = "";
   else newQuery = query;
 
   PaySlip.find({ idMember: { $regex: newQuery, $options: "i" } })
     .countDocuments()
-    .sort({ createddate: -1 }) //desc = -1 acs = 1
-    .then(counter => res.json(counter)) //return lại item
-    .catch(err => res.json(err)); //Catch lỗi rồi return ra;
+    .sort({ createddate: -1 })
+    .then(counter => res.json(counter))
+    .catch(err => res.json(err));
 });
 
-router.post("/", (req, res) => {
+router.post("/", ({ body }, res) => {
+  const { _id, idMember, idSupplier, createddate, totalAmt } = body;
   const newPaySlip = new PaySlip({
-    _id: req.body._id,
-    idMember: req.body.idMember,
-    idSupplier: req.body.idSupplier,
-    createddate: req.body.createddate,
-    totalAmt: req.body.totalAmt,
+    _id,
+    idMember,
+    idSupplier,
+    createddate,
+    totalAmt
   });
 
   newPaySlip
     .save()
-    .then(payslip => res.json(payslip)) //reutnr lại item đã save đc
-    .catch(err => res.json(err)); //Catch lỗi rồi return ra;
+    .then(payslip => res.json(payslip))
+    .catch(err => res.json(err));
 });
 
-
-router.delete("/:id", (req, res) => {
-  // Có 2 cách:
-  //          + Tìm ra bằng "findById" rồi "remove"
-  //          + Tìm và xóa bằng "findByIdAndDelete"
-  // Cách 2 là best practice
-
-  // ----------------Cách 1------------------
-  //   Item.findById(req.params.id)
-  //     .then(item => item.remove().then(() => res.json({ success: true })))
-  //     .catch(err => res.status(404).json({ success: false }));
-  // ----------------Cách 2------------------
-
-  PaySlip.findByIdAndDelete(req.params.id)
-    .then(payslip => res.json(payslip)) //Return lại item đã xóa
-    .catch(err => res.json(err)); //Catch lỗi rồi return ra
+router.delete("/:id", ({ params }, res) => {
+  PaySlip.findByIdAndDelete(params.id)
+    .then(payslip => res.json(payslip))
+    .catch(err => res.json(err));
 });
 
-module.exports = router;
+export default router;

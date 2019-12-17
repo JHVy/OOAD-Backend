@@ -1,51 +1,46 @@
-const express = require("express");
+import express from "express";
 const router = express.Router();
 
-
-const InvoiceDet = require("../../models/InvoiceDet");
-
-
-router.get("/:id", (req, res) => {
-  InvoiceDet.findById(req.params.id)
+import InvoiceDet from "../../models/InvoiceDet";
+router.get("/:id", ({ params }, res) => {
+  InvoiceDet.findById(params.id)
     .then(invoicedet => {
       res.json(invoicedet);
     }) //return lại item
     .catch(err => res.json(err)); //Catch lỗi rồi return ra;
 });
 
-router.get("/getall/:query", (req, res) => {
-  const { query } = req.params;
+router.get("/getall/:query", ({ params }, res) => {
+  const { query } = params;
   let newQuery = "";
   if (query === "undefined") newQuery = "";
   else newQuery = query;
 
   InvoiceDet.find()
     .sort({ createAt: -1 }) //desc = -1 acs = 1
-    .then(invoicedet => res.json(invoicedet)) //return lại item 
+    .then(invoicedet => res.json(invoicedet)) //return lại item
     .catch(err => res.json(err)); //Catch lỗi rồi return ra;
 });
 
-router.put("/:id", (req, res) => {
-  console.log(req.body);
-
+router.put("/:id", ({ body, params }, res) => {
+  const { idInvoice, idProduct, price, quantity, discount } = body;
   const newInvoiceDet = {
-    idInvoice: req.body.idInvoice,
-    idProduct: req.body.idProduct,
-    price: req.body.price,
-    quantity: req.body.quantity,
-    discount: req.body.discount,
-    _id: req.body._id
+    idInvoice,
+    idProduct,
+    price,
+    quantity,
+    discount,
+    _id: params._id
   };
-  InvoiceDet.findByIdAndUpdate(req.body._id, newInvoiceDet, { new: true })
+  InvoiceDet.findByIdAndUpdate(params._id, newInvoiceDet, { new: true })
     .then(invoicedet => {
       res.json(invoicedet);
     }) //return lại item
     .catch(err => res.json(err)); //Catch lỗi rồi return ra;
 });
 
-
-router.get("/:objects/:page/:query", (req, res) => {
-  const { objects, page, query } = req.params;
+router.get("/:objects/:page/:query", ({ params }, res) => {
+  const { objects, page, query } = params;
   let newQuery = "";
   if (query === "undefined") newQuery = "";
   else newQuery = query;
@@ -58,9 +53,8 @@ router.get("/:objects/:page/:query", (req, res) => {
     .catch(err => res.json(err)); //Catch lỗi rồi return ra;
 });
 
-
-router.get("/count/:query", (req, res) => {
-  const { query } = req.params;
+router.get("/count/:query", ({ params }, res) => {
+  const { query } = params;
   let newQuery = "";
   if (query === "undefined") newQuery = "";
   else newQuery = query;
@@ -72,15 +66,15 @@ router.get("/count/:query", (req, res) => {
     .catch(err => res.json(err)); //Catch lỗi rồi return ra;
 });
 
-
-router.post("/", (req, res) => {
+router.post("/", ({ body }, res) => {
+  const { idInvoice, idProduct, price, quantity, discount, _id } = body;
   const newInvoiceDet = new InvoiceDet({
-    idInvoice: req.body.idInvoice,
-    idProduct: req.body.idProduct,
-    price: req.body.price,
-    quantity: req.body.quantity,
-    discount: req.body.discount,
-    _id: req.body._id
+    idInvoice,
+    idProduct,
+    price,
+    quantity,
+    discount,
+    _id
   });
 
   newInvoiceDet
@@ -89,12 +83,10 @@ router.post("/", (req, res) => {
     .catch(err => res.json(err)); //Catch lỗi rồi return ra;
 });
 
-
-router.delete("/:id", (req, res) => {
-
-  InvoiceDet.findByIdAndDelete(req.params.id)
+router.delete("/:id", ({ params }, res) => {
+  InvoiceDet.findByIdAndDelete(params.id)
     .then(item => res.json(item)) //Return lại item đã xóa
     .catch(err => res.json(err)); //Catch lỗi rồi return ra
 });
 
-module.exports = router;
+export default router;
