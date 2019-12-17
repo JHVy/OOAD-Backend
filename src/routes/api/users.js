@@ -1,14 +1,26 @@
-import express from 'express'
+const express = require('express')
 const router = express.Router()
-import bcrypt from 'bcryptjs'
-import jwt from 'jsonwebtoken'
-import 'dotenv/config'
+const bcrypt = require('bcryptjs')
+const jwt = require('jsonwebtoken')
+require('dotenv').config()
 
-import User from '../../models/User'
+//User Model
+const User = require('../../models/User')
 
-router.post('/', ({ body }, res) => {
-  const { idRole, username, password, fullName, phoneNumber, address } = body
+//@route POST api/users
+//@desc Register new user
+//@access Public
+router.post('/', (req, res) => {
+  const {
+    idRole,
+    username,
+    password,
+    fullName,
+    phoneNumber,
+    address
+  } = req.body
 
+  //Simple validation
   if (
     !username ||
     !idRole ||
@@ -20,6 +32,7 @@ router.post('/', ({ body }, res) => {
     return res.status(400).json({ msg: 'Please enter all fields' })
   }
 
+  //Check for existing user
   User.findOne({ username }).then(user => {
     if (user) {
       return res.status(400).json({ msg: 'User already exist' })
@@ -33,6 +46,7 @@ router.post('/', ({ body }, res) => {
       password
     })
 
+    //Create salt & hash
     bcrypt.genSalt(10, (err, salt) => {
       bcrypt.hash(newUser.password, salt, (err, hash) => {
         if (err) throw err
@@ -68,94 +82,4 @@ router.post('/', ({ body }, res) => {
   })
 })
 
-router.get('/:id', (req, res) => {
-  User.findById(req.params.id)
-    .then(user => {
-      res.json(user)
-    })
-    .catch(err => res.json(err))
-})
-
-router.put('/:id', (req, res) => {
-  const newUser = ({
-    idRole,
-    username,
-    password,
-    fullName,
-    phoneNumber,
-    address
-  } = req.body)
-
-  bcrypt.hash(newUser.password, 10, (err, hash) => {
-    if (err) return res.json(err)
-    newUser.password = hash
-    User.findByIdAndUpdate(req.body._id, newUser, { new: true })
-      .then(user => {
-        res.json(user)
-      })
-      .catch(err => res.json(err))
-  })
-})
-
-router.get('/:objects/:page/:query', (req, res) => {
-  const { objects, page, query } = req.params
-  let newQuery = ''
-  if (query === 'undefined') newQuery = ''
-  else newQuery = query
-
-  User.find({ username: { $regex: newQuery, $options: 'i' } })
-    .limit(Number(objects))
-    .skip(objects * (page - 1))
-
-    .then(user => res.json(user))
-    .catch(err => res.json(err))
-})
-
-router.get('/count/:query', (req, res) => {
-  const { query } = req.params
-  let newQuery = ''
-  if (query === 'undefined') newQuery = ''
-  else newQuery = query
-
-  User.find({ username: { $regex: newQuery, $options: 'i' } })
-    .countDocuments()
-    .sort({ createAt: -1 })
-    .then(counter => res.json(counter))
-    .catch(err => res.json(err))
-})
-
-router.delete('/:id', (req, res) => {
-  User.findByIdAndDelete(req.params.id)
-    .then(item => res.json(item))
-    .catch(err => res.json(err))
-})
-
-router.post('/cp/:id', (req, res) => {
-  const username = req.body.username
-  const password = req.body.curPassword
-
-  if (!username || !password) {
-    return res.send({
-      error: 'User name and password required'
-    })
-  }
-
-  User.findById(req.body._id).then(user => {
-    if (!user) {
-      return res.send({
-        error: 'Invalid user'
-      })
-    }
-
-    bcrypt.compare(password, user.password, function(err, response) {
-      if (err) return res.json(err)
-      else if (response == false) {
-        return res.json({ status: 400, msg: 'Wrong' })
-      } else {
-        return res.json({ status: 200, msg: 'Correct' })
-      }
-    })
-  })
-})
-
-export default router
+module.exports = router

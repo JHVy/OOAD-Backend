@@ -1,17 +1,20 @@
-import mongoose from 'mongoose'
+const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
+//Create Schema
+
 const ProductSchema = new Schema({
+  //Không cần thuộc tính ID vì trong MongoDB sẽ tự tạo ID cho mình khi insert vào
   idCategory: {
-    type: String,
-    required: true
+    type: String, // Kiểu String
+    required: true //=> khi insert vào thì bắt buộc phải có "idCategory"
   },
   name: {
-    type: String,
-    required: false
+    type: String, // Kiểu String
+    required: false //=> khi insert vào thì bắt buộc phải có "name"
   },
   price: {
-    type: Number,
+    type: Number, // Kiểu String
     required: false
   },
   quantity: {
@@ -25,6 +28,4 @@ const ProductSchema = new Schema({
   }
 })
 
-const Product = mongoose.model('product', ProductSchema)
-
-export default Product
+module.exports = Product = mongoose.model('product', ProductSchema)

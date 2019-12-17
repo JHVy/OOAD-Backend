@@ -1,12 +1,11 @@
 import express from 'express'
 const router = express.Router()
 
-import Invoice from '../../models/Invoice'
-
+import InvoiceDet from '../../models/InvoiceDet'
 router.get('/:id', ({ params }, res) => {
-  Invoice.findById(params.id)
-    .then(invoice => {
-      res.json(invoice)
+  InvoiceDet.findById(params.id)
+    .then(invoicedet => {
+      res.json(invoicedet)
     }) //return lại item
     .catch(err => res.json(err)) //Catch lỗi rồi return ra;
 })
@@ -17,27 +16,25 @@ router.get('/getall/:query', ({ params }, res) => {
   if (query === 'undefined') newQuery = ''
   else newQuery = query
 
-  Invoice.find()
+  InvoiceDet.find()
     .sort({ createAt: -1 }) //desc = -1 acs = 1
-    .then(invoice => res.json(invoice)) //return lại item
+    .then(invoicedet => res.json(invoicedet)) //return lại item
     .catch(err => res.json(err)) //Catch lỗi rồi return ra;
 })
 
 router.put('/:id', ({ body, params }, res) => {
-  const { idMember, idUser, totalAmt, createddate, comments, status } = body
-
-  const newInvoice = {
-    idMember,
-    idUser,
-    totalAmt,
-    createddate,
-    comments,
-    status,
-    _id: params.id
+  const { idInvoice, idProduct, price, quantity, discount } = body
+  const newInvoiceDet = {
+    idInvoice,
+    idProduct,
+    price,
+    quantity,
+    discount,
+    _id: params._id
   }
-  Invoice.findByIdAndUpdate(params.id, newInvoice, { new: true })
-    .then(invoice => {
-      res.json(invoice)
+  InvoiceDet.findByIdAndUpdate(params._id, newInvoiceDet, { new: true })
+    .then(invoicedet => {
+      res.json(invoicedet)
     }) //return lại item
     .catch(err => res.json(err)) //Catch lỗi rồi return ra;
 })
@@ -48,11 +45,11 @@ router.get('/:objects/:page/:query', ({ params }, res) => {
   if (query === 'undefined') newQuery = ''
   else newQuery = query
 
-  Invoice.find({ idMember: { $regex: newQuery, $options: 'i' } })
+  InvoiceDet.find({ idMember: { $regex: newQuery, $options: 'i' } })
     .limit(Number(objects))
     .skip(objects * (page - 1))
     //.sort({ createddate: -1 }) //desc = -1 acs = 1
-    .then(invoice => res.json(invoice)) //return lại item
+    .then(invoicedet => res.json(invoicedet)) //return lại item
     .catch(err => res.json(err)) //Catch lỗi rồi return ra;
 })
 
@@ -62,7 +59,7 @@ router.get('/count/:query', ({ params }, res) => {
   if (query === 'undefined') newQuery = ''
   else newQuery = query
 
-  Invoice.find({ name: { $regex: newQuery, $options: 'i' } })
+  InvoiceDet.find({ name: { $regex: newQuery, $options: 'i' } })
     .countDocuments()
     .sort({ createddate: -1 }) //desc = -1 acs = 1
     .then(counter => res.json(counter)) //return lại item
@@ -70,33 +67,24 @@ router.get('/count/:query', ({ params }, res) => {
 })
 
 router.post('/', ({ body }, res) => {
-  const {
-    _id,
-    idMember,
-    idUser,
-    totalAmt,
-    createddate,
-    comments,
-    status
-  } = body
-  const newInvoice = new Invoice({
-    _id,
-    idMember,
-    idUser,
-    totalAmt,
-    createddate,
-    comments,
-    status
+  const { idInvoice, idProduct, price, quantity, discount, _id } = body
+  const newInvoiceDet = new InvoiceDet({
+    idInvoice,
+    idProduct,
+    price,
+    quantity,
+    discount,
+    _id
   })
 
-  newInvoice
+  newInvoiceDet
     .save()
-    .then(invoice => res.json(invoice)) //reutnr lại item đã save đc
+    .then(invoicedet => res.json(invoicedet)) //reutnr lại item đã save đc
     .catch(err => res.json(err)) //Catch lỗi rồi return ra;
 })
 
 router.delete('/:id', ({ params }, res) => {
-  Invoice.findByIdAndDelete(params.id)
+  InvoiceDet.findByIdAndDelete(params.id)
     .then(item => res.json(item)) //Return lại item đã xóa
     .catch(err => res.json(err)) //Catch lỗi rồi return ra
 })

@@ -1,28 +1,28 @@
-const mongoose = require('mongoose')
+import mongoose from 'mongoose'
 const Schema = mongoose.Schema
 
 //Create Schema
 
-const MemberSchema = new Schema({
+const StorageReportSchema = new Schema({
   //Không cần thuộc tính ID vì trong MongoDB sẽ tự tạo ID cho mình khi insert vào
-  name: {
+  idMember: {
     type: String, // Kiểu String
     required: true //=> khi insert vào thì bắt buộc phải có "name"
   },
-  phone: {
+  idMaterial: {
     type: String, // Kiểu String
     required: true
   },
-  point: {
+  quantity: {
     type: Number, // Kiểu Number
     required: true,
     default: 0
   },
-  createAt: {
+  createddate: {
     type: Date,
     required: true,
     default: Date.now()
   }
 })
-
-module.exports = Member = mongoose.model('member', MemberSchema)
+const StorageReport = mongoose.model('storagereport', StorageReportSchema)
+export default StorageReport

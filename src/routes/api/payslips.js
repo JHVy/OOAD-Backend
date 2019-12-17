@@ -19,15 +19,16 @@ router.get('', (req, res) => {
     .catch(err => res.json(err))
 })
 
-router.put('/:id', ({ body }, res) => {
+router.put('/:id', ({ body, params }, res) => {
+  const { idMember, idSupplier, createddate, totalAmt } = body
   const newPaySlip = {
-    idMember: body.idMember,
-    idSupplier: body.idSupplier,
-    createddate: body.createddate,
-    totalAmt: body.totalAmt,
-    _id: body._id
+    idMember,
+    idSupplier,
+    createddate,
+    totalAmt,
+    _id: params._id
   }
-  PaySlip.findByIdAndUpdate(body._id, newPaySlip, { new: true })
+  PaySlip.findByIdAndUpdate(params._id, newPaySlip, { new: true })
     .then(payslip => {
       res.json(payslip)
     })
@@ -62,12 +63,13 @@ router.get('/count/:query', ({ params }, res) => {
 })
 
 router.post('/', ({ body }, res) => {
+  const { _id, idMember, idSupplier, createddate, totalAmt } = body
   const newPaySlip = new PaySlip({
-    _id: body._id,
-    idMember: body.idMember,
-    idSupplier: body.idSupplier,
-    createddate: body.createddate,
-    totalAmt: body.totalAmt
+    _id,
+    idMember,
+    idSupplier,
+    createddate,
+    totalAmt
   })
 
   newPaySlip

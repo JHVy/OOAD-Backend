@@ -1,60 +1,66 @@
-import express from 'express'
+const express = require('express')
 const router = express.Router()
-import bcrypt from 'bcryptjs'
-import jwt from 'jsonwebtoken'
-import auth from '../../middleware/auth'
-import 'dotenv/config'
+const bcrypt = require('bcryptjs')
+const jwt = require('jsonwebtoken')
+const auth = require('../../middleware/auth')
+require('dotenv').config()
 
-import User from '../../models/User'
+//User Model
+const User = require('../../models/User')
 
-router.post('/', async ({ body }, res, next) => {
-  try {
-    const { username, password } = body
+//@route POST api/auth
+//@desc Authenticate user
+//@access Public
+router.post('/', (req, res) => {
+  const { username, password } = req.body
 
-    if (!username || !password) {
-      return res.status(400).json({ msg: 'Please enter all fields' })
-    }
+  //Simple validation
+  if (!username || !password) {
+    return res.status(400).json({ msg: 'Please enter all fields' })
+  }
 
-    let user = await User.findOne({ username })
-
+  //Check for existing user
+  User.findOne({ username }).then(user => {
     if (!user) {
       return res.status(400).json({ msg: "User doesn't exist" })
     }
 
-    let isMatch = await bcrypt.compare(password, user.password)
+    //Validate password
+    bcrypt.compare(password, user.password).then(isMatch => {
+      if (!isMatch) return res.status(400).json({ msg: 'Invalid credentials' })
 
-    if (!isMatch) {
-      return res.status(400).json({ msg: 'Invalid credentials' })
-    }
+      jwt.sign(
+        {
+          id: user.id,
+          role: user.idRole
+        },
+        process.env.jwtSecret,
+        { expiresIn: 3600 },
+        (err, token) => {
+          if (err) throw err
 
-    let token = jwt.sign(
-      {
-        id: user.id,
-        role: user.idRole
-      },
-      process.env.jwtSecret,
-      { expiresIn: 24 * 3600 }
-    )
-
-    res.json({
-      token,
-      user: {
-        name: user.username,
-        id: user.id,
-        idRole: user.idRole,
-        fullName: user.fullName
-      }
+          res.json({
+            token,
+            user: {
+              name: user.username,
+              id: user.id,
+              idRole: user.idRole,
+              fullName: user.fullName
+            }
+          })
+        }
+      )
     })
-  } catch (error) {
-    return next(error)
-  }
+  })
 })
 
-router.get('/user', auth, ({ user }, res) => {
-  User.findById(user.id)
+//@route GET api/auth/user
+//@desc Get user
+//@access Private
+router.get('/user', auth, (req, res) => {
+  User.findById(req.user.id)
     .select('-password')
     .then(user => res.json(user))
     .catch(err => res.json(err))
 })
-
-export default router
+module.exports = router

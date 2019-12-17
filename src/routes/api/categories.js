@@ -1,31 +1,43 @@
-import express from 'express'
+const express = require('express')
 const router = express.Router()
-import auth from '../../middleware/auth'
+const auth = require('../../middleware/auth')
+const mongoose = require('mongoose')
 
-import Category from '../../models/Category'
+//Category Model
+const Category = require('../../models/Category')
 
-router.get('/:id', auth, ({ params }, res) => {
-  Category.findById(params.id)
+//@route GET /category/:id
+//@desc  Get category by ID
+//@access Private
+router.get('/:id', auth, (req, res) => {
+  Category.findById(req.params.id)
     .then(category => {
       res.json(category)
+      console.log(category)
     })
     .catch(err => res.json(err))
 })
 
-router.put('/:id', auth, ({ body }, res) => {
+//@route PUT /category/:id
+//@desc  Update category by ID
+//@access Private
+router.put('/:id', auth, (req, res) => {
   const newCategory = {
-    name: body.name,
-    _id: body._id
+    name: req.body.name,
+    _id: req.body._id
   }
-  Category.findByIdAndUpdate(body._id, newCategory, { new: true })
+  Category.findByIdAndUpdate(req.body._id, newCategory, { new: true })
     .then(category => {
       res.json(category)
     })
     .catch(err => res.json(err))
 })
 
-router.get('/:objects/:page/:query', auth, ({ params }, res) => {
-  const { objects, page, query } = params
+//@route GET /category
+//@desc  Get All categories
+//@access Private
+router.get('/:objects/:page/:query', auth, (req, res) => {
+  const { objects, page, query } = req.params
   let newQuery = ''
   if (query === 'undefined') newQuery = ''
   else newQuery = query
@@ -38,8 +50,11 @@ router.get('/:objects/:page/:query', auth, ({ params }, res) => {
     .catch(err => res.json(err))
 })
 
-router.get('/count/:query', ({ params }, res) => {
-  const { query } = params
+//@route GET /category
+//@desc  Get All categories
+//@access Private
+router.get('/count/:query', (req, res) => {
+  const { query } = req.params
   let newQuery = ''
   if (query === 'undefined') newQuery = ''
   else newQuery = query
@@ -50,11 +65,14 @@ router.get('/count/:query', ({ params }, res) => {
     .catch(err => res.json(err))
 })
 
-router.post('/', auth, ({ body }, res) => {
+//@route POST /category
+//@desc  Create a category
+//@access Private
+router.post('/', auth, (req, res) => {
   const newCategory = new Category({
-    _id: body._id,
-    createAt: body.createAt,
-    name: body.name
+    _id: req.body._id,
+    createAt: req.body.createAt,
+    name: req.body.name
   })
 
   newCategory
@@ -63,32 +81,10 @@ router.post('/', auth, ({ body }, res) => {
     .catch(err => res.json(err))
 })
 
-function insertDocument(doc, targetCollection) {
-  while (1) {
-    const cursor = targetCollection
-      .find({}, { _id: 1 })
-      .sort({ _id: -1 })
-      .limit(1)
-
-    const seq = cursor.hasNext() ? cursor.next()._id + 1 : 1
-
-    doc._id = seq
-
-    const results = targetCollection.insert(doc)
-
-    if (results.hasWriteError()) {
-      if (results.writeError.code == 11000) continue
-      else print(`unexpected error inserting data: ${tojson(results)}`)
-    }
-
-    break
-  }
-}
-
-router.delete('/:id', auth, ({ params }, res) => {
-  Category.findByIdAndDelete(params.id)
+router.delete('/:id', auth, (req, res) => {
+  Category.findByIdAndDelete(req.params.id)
     .then(item => res.json(item))
     .catch(err => res.json(err))
 })
 
-export default router
+module.exports = router
