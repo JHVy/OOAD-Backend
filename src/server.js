@@ -11,6 +11,18 @@ import bcrypt from 'bcryptjs'
 import User from './models/User'
 import Role from './models/Role'
 
+import categories from './routes/api/categories'
+import suppliers from './routes/api/suppliers'
+import users from './routes/api/users'
+import auth from './routes/api/authentication'
+import role from './routes/api/roles'
+import member from './routes/api/members'
+import product from './routes/api/products'
+import invoice from './routes/api/invoices'
+import payslip from './routes/api/payslips'
+import materials from './routes/api/materials'
+import storageReports from './routes/api/storagereports'
+import invoiceDet from './routes/api/invoicedets'
 const app = express()
 
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms'))
@@ -91,18 +103,18 @@ app.get('/ping', (req, res) => {
   res.json('pong')
 })
 
-app.use('/api/category', require('./routes/api/categories'))
-app.use('/api/user', require('./routes/api/users'))
-app.use('/api/auth', require('./routes/api/authentication'))
-app.use('/api/role', require('./routes/api/roles'))
-app.use('/api/member', require('./routes/api/members'))
-app.use('/api/product', require('./routes/api/products'))
-app.use('/api/invoice', require('./routes/api/invoices'))
-app.use('/api/payslip', require('./routes/api/payslips'))
-app.use('/api/material', require('./routes/api/materials'))
-app.use('/api/storagereport', require('./routes/api/storagereports'))
-app.use('/api/invoicedet', require('./routes/api/invoicedets'))
-app.use('/api/supplier', require('./routes/api/suppliers'))
+app.use('/api/payslip', payslip)
+app.use('/api/invoice', invoice)
+app.use('/api/product', product)
+app.use('/api/member', member)
+app.use('/api/role', role)
+app.use('/api/auth', auth)
+app.use('/api/category', categories)
+app.use('/api/supplier', suppliers)
+app.use('/api/user', users)
+app.use('/api/material', materials)
+app.use('/api/storagereport', storageReports)
+app.use('/api/invoicedet', invoiceDet)
 
 const port = process.env.PORT || 5000
 
