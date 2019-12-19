@@ -6,7 +6,7 @@ import auth from '../../middleware/auth'
 import role from '../../middleware/role'
 import Role from '../../Role'
 
-router.get('/:id', auth, role(Role.invoiceManagement), ({ params }, res) => {
+router.get('/:id', auth, role([Role.invoiceManagement]), ({ params }, res) => {
   Invoice.findById(params.id)
     .then(invoice => {
       res.json(invoice)
@@ -17,7 +17,7 @@ router.get('/:id', auth, role(Role.invoiceManagement), ({ params }, res) => {
 router.put(
   '/:id',
   auth,
-  role(Role.invoiceManagement),
+  role([Role.invoiceManagement]),
   ({ body, params }, res) => {
     const newInvoice = {
       idMember: body.idMember,
@@ -38,7 +38,7 @@ router.put(
 router.get(
   '/:objects/:page/:query',
   auth,
-  role(Role.invoiceManagement),
+  role([Role.invoiceManagement]),
   ({ params }, res) => {
     const { objects, page, query } = params
     let newQuery = ''
@@ -67,7 +67,7 @@ router.get('/count/:query', ({ params }, res) => {
     .catch(err => res.json(err))
 })
 
-router.post('/', auth, role(Role.invoiceManagement), ({ body }, res) => {
+router.post('/', auth, role([Role.invoiceManagement]), ({ body }, res) => {
   const newInvoice = new Invoice({
     _id: body._id,
     idMember: body.idMember,
@@ -83,10 +83,15 @@ router.post('/', auth, role(Role.invoiceManagement), ({ body }, res) => {
     .catch(err => res.json(err))
 })
 
-router.delete('/:id', auth, role(Role.invoiceManagement), ({ params }, res) => {
-  Invoice.findByIdAndDelete(params.id)
-    .then(item => res.json(item))
-    .catch(err => res.json(err))
-})
+router.delete(
+  '/:id',
+  auth,
+  role([Role.invoiceManagement]),
+  ({ params }, res) => {
+    Invoice.findByIdAndDelete(params.id)
+      .then(item => res.json(item))
+      .catch(err => res.json(err))
+  }
+)
 
 export default router
