@@ -108,7 +108,7 @@ router.get(
 router.put(
   '/quantity/:id',
   auth,
-  role(Role.materialManagement),
+  role([Role.materialManagement]),
   ({ body }, res) => {
     Material.findByIdAndUpdate(
       body._id,
