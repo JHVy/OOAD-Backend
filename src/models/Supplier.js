@@ -1,26 +1,29 @@
 import mongoose from 'mongoose'
 const Schema = mongoose.Schema
 
-const SupplierSchema = new Schema({
-  name: {
-    type: String,
-    required: true
+const SupplierSchema = new Schema(
+  {
+    name: {
+      type: String,
+      required: true
+    },
+    phone: {
+      type: String,
+      required: true
+    },
+    address: {
+      type: String,
+      required: true
+    },
+    createAt: {
+      type: Date,
+      required: true,
+      default: Date.now()
+    }
   },
-  phone: {
-    type: String,
-    required: true
-  },
-  address: {
-    type: String,
-    required: true
-  },
-  createAt: {
-    type: Date,
-    required: true,
-    default: Date.now()
-  }
-})
+  { collection: 'Suppliers' }
+)
 
-const Supplier = mongoose.model('supplier', SupplierSchema)
+const Supplier = mongoose.model('Suppliers', SupplierSchema)
 
 export default Supplier

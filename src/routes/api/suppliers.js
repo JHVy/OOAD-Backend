@@ -9,7 +9,8 @@ import Role from '../../Role'
 router.get(
   '/search/:query',
   auth,
-  role(Role.supplierManagement),
+  role([Role.supplierManagement]),
+
   ({ params }, res) => {
     const { query } = params
 
@@ -23,7 +24,7 @@ router.get(
   }
 )
 
-router.get('/:id', auth, role(Role.supplierManagement), ({ params }, res) => {
+router.get('/:id', auth, role([Role.supplierManagement]), ({ params }, res) => {
   Supplier.findById(params.id)
     .then(supplier => {
       res.json(supplier)
@@ -31,7 +32,7 @@ router.get('/:id', auth, role(Role.supplierManagement), ({ params }, res) => {
     .catch(err => res.json(err))
 })
 
-router.get('', auth, role(Role.supplierManagement), (req, res) => {
+router.get('', auth, role([Role.supplierManagement]), (req, res) => {
   Supplier.find()
     .then(supplier => {
       res.json(supplier)
@@ -42,7 +43,8 @@ router.get('', auth, role(Role.supplierManagement), (req, res) => {
 router.put(
   '/:id',
   auth,
-  role(Role.supplierManagement),
+  role([Role.supplierManagement]),
+
   ({ body, params }, res) => {
     const newSupplier = {
       name: body.name,
@@ -61,7 +63,8 @@ router.put(
 router.get(
   '/:objects/:page/:query',
   auth,
-  role(Role.supplierManagement),
+  role([Role.supplierManagement]),
+
   ({ params }, res) => {
     const { objects, page, query } = params
     let newQuery = ''
@@ -90,7 +93,7 @@ router.get('/count/:query', (req, res) => {
     .catch(err => res.json(err)) //Catch lỗi rồi return ra;
 })
 
-router.post('/', auth, role(Role.supplierManagement), ({ body }, res) => {
+router.post('/', auth, role([Role.supplierManagement]), ({ body }, res) => {
   const newSupplier = new Supplier({
     name: body.name,
     phone: body.phone,
@@ -107,7 +110,7 @@ router.post('/', auth, role(Role.supplierManagement), ({ body }, res) => {
 router.delete(
   '/:id',
   auth,
-  role(Role.supplierManagement),
+  role([Role.supplierManagement]),
   ({ params }, res) => {
     Supplier.findByIdAndDelete(params.id)
       .then(item => res.json(item))

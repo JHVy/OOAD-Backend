@@ -5,7 +5,7 @@ import auth from '../../middleware/auth'
 import role from '../../middleware/role'
 import Role from '../../Role'
 
-router.get('/:id', auth, role(Role.categoryManagement), ({ params }, res) => {
+router.get('/:id', auth, role([Role.categoryManagement]), ({ params }, res) => {
   Category.findById(params.id)
     .then(category => {
       res.json(category)
@@ -33,7 +33,7 @@ router.get(
 router.put(
   '/:id',
   auth,
-  role(Role.categoryManagement),
+  role([Role.categoryManagement]),
   ({ params, body }, res) => {
     const newCategory = {
       name: body.name,
@@ -50,7 +50,7 @@ router.put(
 router.get(
   '/:objects/:page/:query',
   auth,
-  role(Role.categoryManagement),
+  role([Role.categoryManagement]),
   ({ params }, res) => {
     const { objects, page, query } = params
     let newQuery = ''
@@ -78,7 +78,7 @@ router.get('/count/:query', ({ params }, res) => {
     .catch(err => res.json(err))
 })
 
-router.post('/', auth, role(Role.categoryManagement), ({ body }, res) => {
+router.post('/', auth, role([Role.categoryManagement]), ({ body }, res) => {
   const newCategory = new Category({
     _id: body._id,
     createAt: body.createAt,
@@ -94,7 +94,7 @@ router.post('/', auth, role(Role.categoryManagement), ({ body }, res) => {
 router.delete(
   '/:id',
   auth,
-  role(Role.categoryManagement),
+  role([Role.categoryManagement]),
   ({ params }, res) => {
     Category.findByIdAndDelete(params.id)
       .then(item => res.json(item))

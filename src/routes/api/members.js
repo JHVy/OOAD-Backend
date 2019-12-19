@@ -9,7 +9,7 @@ import Role from '../../Role'
 router.get(
   '/search/:query',
   auth,
-  role(Role.memberManagement),
+  role([Role.memberManagement]),
   ({ params }, res) => {
     const { query } = params
     let newQuery
@@ -23,7 +23,7 @@ router.get(
   }
 )
 
-router.get('/:id', auth, role(Role.memberManagement), ({ params }, res) => {
+router.get('/:id', auth, role([Role.memberManagement]), ({ params }, res) => {
   Member.findById(params.id)
     .then(member => {
       res.json(member)
@@ -31,7 +31,7 @@ router.get('/:id', auth, role(Role.memberManagement), ({ params }, res) => {
     .catch(err => res.json(err))
 })
 
-router.get('', auth, role(Role.memberManagement), (req, res) => {
+router.get('', auth, role([Role.memberManagement]), (req, res) => {
   Member.find()
     .then(member => {
       res.json(member)
@@ -42,7 +42,7 @@ router.get('', auth, role(Role.memberManagement), (req, res) => {
 router.put(
   '/:id',
   auth,
-  role(Role.memberManagement),
+  role([Role.memberManagement]),
   ({ body, params }, res) => {
     const newMember = {
       name: body.name,
@@ -61,7 +61,7 @@ router.put(
 router.get(
   '/:objects/:page/:query',
   auth,
-  role(Role.memberManagement),
+  role([Role.memberManagement]),
   ({ params }, res) => {
     const { objects, page, query } = params
     let newQuery = ''
@@ -90,7 +90,7 @@ router.get('/count/:query', ({ params }, res) => {
     .catch(err => res.json(err))
 })
 
-router.post('/', auth, role(Role.memberManagement), ({ body }, res) => {
+router.post('/', auth, role([Role.memberManagement]), ({ body }, res) => {
   const newMember = new Member({
     _id: body._id,
     name: body.name,
@@ -104,10 +104,15 @@ router.post('/', auth, role(Role.memberManagement), ({ body }, res) => {
     .catch(err => res.json(err))
 })
 
-router.delete('/:id', auth, role(Role.memberManagement), ({ params }, res) => {
-  Member.findByIdAndDelete(params.id)
-    .then(item => res.json(item))
-    .catch(err => res.json(err))
-})
+router.delete(
+  '/:id',
+  auth,
+  role([Role.memberManagement]),
+  ({ params }, res) => {
+    Member.findByIdAndDelete(params.id)
+      .then(item => res.json(item))
+      .catch(err => res.json(err))
+  }
+)
 
 export default router

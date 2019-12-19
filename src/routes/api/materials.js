@@ -5,7 +5,7 @@ import auth from '../../middleware/auth'
 import role from '../../middleware/role'
 import Role from '../../Role'
 
-router.get('/:id', auth, role(Role.materialManagement), ({ params }, res) => {
+router.get('/:id', auth, role([Role.materialManagement]), ({ params }, res) => {
   Material.findById(params.id)
     .then(material => {
       res.json(material)
@@ -16,7 +16,7 @@ router.get('/:id', auth, role(Role.materialManagement), ({ params }, res) => {
 router.put(
   '/:id',
   auth,
-  role(Role.materialManagement),
+  role([Role.materialManagement]),
   ({ body, params }, res) => {
     const newMaterial = {
       name: body.name,
@@ -34,7 +34,7 @@ router.put(
 router.get(
   '/:objects/:page/:query',
   auth,
-  role(Role.materialManagement),
+  role([Role.materialManagement]),
   ({ params }, res) => {
     const { objects, page, query } = params
     let newQuery = ''
@@ -63,7 +63,7 @@ router.get('/count/:query', ({ params }, res) => {
     .catch(err => res.json(err))
 })
 
-router.post('/', auth, role(Role.materialManagement), ({ body }, res) => {
+router.post('/', auth, role([Role.materialManagement]), ({ body }, res) => {
   const newMaterial = new Material({
     name: body.name,
     quantity: body.quantity,
@@ -79,7 +79,7 @@ router.post('/', auth, role(Role.materialManagement), ({ body }, res) => {
 router.delete(
   '/:id',
   auth,
-  role(Role.materialManagement),
+  role([Role.materialManagement]),
   ({ params }, res) => {
     Material.findByIdAndDelete(params.id)
       .then(item => res.json(item))

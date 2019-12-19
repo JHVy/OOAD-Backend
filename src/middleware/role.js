@@ -1,13 +1,17 @@
-function role(role = '') {
+function role(role = []) {
   return [
     (req, res, next) => {
       let arrayOfRoles = createArrayOfRoles(req.user.role)
 
-      if (role.length && !arrayOfRoles.includes(role)) {
-        // user's role is not authorized
-        return res
-          .status(401)
-          .json({ msg: 'You have no permision to do this action' })
+      if (role.length) {
+        role.map(eachRole => {
+          if (!arrayOfRoles.includes(eachRole)) {
+            // user's role is not authorized
+            return res
+              .status(401)
+              .json({ msg: 'You have no permision to do this action' })
+          }
+        })
       }
       next()
     }

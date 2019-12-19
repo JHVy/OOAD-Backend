@@ -31,6 +31,7 @@ router.post('/', async ({ body }, res, next) => {
     }
 
     let role = await Role.findOne({ _id: user.idRole })
+    console.log(user)
 
     if (!role) {
       return res.status(400).json({ msg: "Role doesn't exist" })
@@ -47,10 +48,7 @@ router.post('/', async ({ body }, res, next) => {
         if (err) throw err
         res.json({
           token,
-          user: {
-            id: user.id,
-            idRole: user.idRole
-          },
+          user,
           role
         })
       }
