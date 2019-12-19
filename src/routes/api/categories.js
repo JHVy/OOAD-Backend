@@ -13,6 +13,23 @@ router.get('/:id', auth, role(Role.categoryManagement), ({ params }, res) => {
     .catch(err => res.json(err))
 })
 
+router.get(
+  '/getall/:query',
+  auth,
+  role(Role.categoryManagement),
+  ({ params }, res) => {
+    const { query } = params
+    let newQuery
+    if (query === 'undefined') newQuery = ''
+    else newQuery = query
+
+    Category.find({ name: { $regex: newQuery, $options: 'i' } })
+      .sort({ name: -1 })
+      .then(cate => res.json(cate))
+      .catch(err => res.json(err))
+  }
+)
+
 router.put(
   '/:id',
   auth,

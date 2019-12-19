@@ -17,14 +17,15 @@ const ProductSchema = new Schema({
     type: Number, // Kiểu String
     required: false
   },
-  quantity: {
-    type: Number,
-    required: false,
-    default: 0
-  },
-  status: {
+
+  linkpic: {
     type: String,
     required: false
+  },
+  status: {
+    type: Number,
+    required: false,
+    default: 1
   }
 })
 

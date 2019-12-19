@@ -12,7 +12,7 @@ router.get(
   role(Role.memberManagement),
   ({ params }, res) => {
     const { query } = params
-
+    let newQuery
     if (query === 'undefined') newQuery = ''
     else newQuery = query
 
