@@ -115,6 +115,7 @@ app.use('/api/user', users)
 app.use('/api/material', materials)
 app.use('/api/storagereport', storageReports)
 app.use('/api/invoicedet', invoiceDet)
+app.use('/api/product', product)
 
 const port = process.env.PORT || 5000
 

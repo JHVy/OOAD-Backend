@@ -24,8 +24,8 @@ router.put(
       idCategory: body.idCategory,
       name: body.name,
       price: body.price,
-      quantity: body.quantity,
       status: body.status,
+      linkpic: body.linkpic,
       _id: params.id
     }
     Product.findByIdAndUpdate(params.id, newProduct, { new: true })
@@ -33,6 +33,23 @@ router.put(
         res.json(product)
       })
       .catch(err => res.json(err))
+  }
+)
+
+router.get(
+  '/getall/:query',
+  auth,
+  role(Role.productManagement),
+  ({ params }, res) => {
+    const { query } = params
+    let newQuery = ''
+    if (query === 'undefined') newQuery = ''
+    else newQuery = query
+
+    Product.find()
+      .sort({ name: -1 }) //desc = -1 acs = 1
+      .then(product => res.json(product)) //return lại item
+      .catch(err => res.json(err)) //Catch lỗi rồi return ra;
   }
 )
 
@@ -49,7 +66,7 @@ router.get(
     Product.find({ name: { $regex: newQuery, $options: 'i' } })
       .limit(Number(objects))
       .skip(objects * (page - 1))
-      .sort({ createAt: -1 })
+      .sort({ name: -1 })
       .then(product => res.json(product))
       .catch(err => res.json(err))
   }
@@ -70,12 +87,12 @@ router.get('/count/:query', (req, res) => {
 
 router.post('/', auth, role([Role.productManagement]), ({ body }, res) => {
   const newProduct = new Product({
-    _id: req.body._id,
-    idCategory: req.body.idCategory,
-    name: req.body.name,
-    price: req.body.price,
-    quantity: req.body.quantity,
-    status: req.body.status
+    _id: body._id,
+    idCategory: body.idCategory,
+    name: body.name,
+    price: body.price,
+    linkpic: body.linkpic,
+    status: body.status
   })
 
   newProduct
