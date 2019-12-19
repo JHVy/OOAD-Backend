@@ -38,6 +38,7 @@ router.post('/', async ({ body }, res, next) => {
     }
     jwt.sign(
       {
+        name: user.username,
         id: user.id,
         idRole: user.idRole,
         role
