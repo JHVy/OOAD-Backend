@@ -1,9 +1,19 @@
 import express from 'express'
 const router = express.Router()
-
 import InvoiceDet from '../../models/InvoiceDet'
+
 router.get('/:id', ({ params }, res) => {
   InvoiceDet.findById(params.id)
+
+    .then(invoicedet => {
+      res.json(invoicedet)
+    }) //return lại item
+    .catch(err => res.json(err)) //Catch lỗi rồi return ra;
+})
+
+router.get('/getByInvoiceId/:id', ({ params }, res) => {
+  InvoiceDet.find({ idInvoice: params.id })
+    .populate('idProduct', 'name')
     .then(invoicedet => {
       res.json(invoicedet)
     }) //return lại item

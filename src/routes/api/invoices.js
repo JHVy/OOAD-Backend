@@ -8,6 +8,8 @@ import Role from '../../Role'
 
 router.get('/:id', auth, role([Role.invoiceManagement]), ({ params }, res) => {
   Invoice.findById(params.id)
+    .populate('idUser', 'username')
+    .populate('idMember', 'name')
     .then(invoice => {
       res.json(invoice)
     })
@@ -41,11 +43,10 @@ router.get(
   role([Role.invoiceManagement]),
   ({ params }, res) => {
     const { objects, page, query } = params
-    let newQuery = ''
-    if (query === 'undefined') newQuery = ''
-    else newQuery = query
 
-    Invoice.find({ idMember: { $regex: newQuery, $options: 'i' } })
+    Invoice.find()
+      .populate('idUser', 'username')
+      .populate('idMember', 'name')
       .limit(Number(objects))
       .skip(objects * (page - 1))
 
@@ -60,9 +61,9 @@ router.get('/count/:query', ({ params }, res) => {
   if (query === 'undefined') newQuery = ''
   else newQuery = query
 
-  Invoice.find({ name: { $regex: newQuery, $options: 'i' } })
+  Invoice.find({})
     .countDocuments()
-    .sort({ createddate: -1 })
+    .sort({ idMember: -1 })
     .then(counter => res.json(counter))
     .catch(err => res.json(err))
 })
