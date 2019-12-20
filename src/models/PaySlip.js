@@ -4,17 +4,22 @@ const Schema = mongoose.Schema
 const PayslipSchema = new Schema(
   {
     idUser: {
-      type: String,
-      required: false
+      type: mongoose.Schema.Types.ObjectId,
+      required: false,
+      ref: 'Users'
     },
     idSupplier: {
-      type: String,
-      required: false
+      type: mongoose.Schema.Types.ObjectId,
+      required: false,
+      ref: 'Suppliers'
     },
     createddate: {
       type: Date,
       required: false,
       default: Date.now()
+    },
+    comment: {
+      type: String
     },
     totalAmt: {
       type: Number,

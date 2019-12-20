@@ -6,13 +6,15 @@ const Schema = mongoose.Schema
 const StorageReportSchema = new Schema(
   {
     //Không cần thuộc tính ID vì trong MongoDB sẽ tự tạo ID cho mình khi insert vào
-    idMember: {
-      type: String, // Kiểu String
-      required: true //=> khi insert vào thì bắt buộc phải có "name"
+    idUser: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true, //=> khi insert vào thì bắt buộc phải có "name"
+      ref: 'Users'
     },
     idMaterial: {
-      type: String, // Kiểu String
-      required: true
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+      ref: 'Materials'
     },
     quantity: {
       type: Number, // Kiểu Number

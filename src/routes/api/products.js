@@ -9,6 +9,7 @@ import Role from '../../Role'
 
 router.get('/:id', auth, role([Role.productManagement]), ({ params }, res) => {
   Product.findById(params.id)
+    .populate('idCategory', 'name')
     .then(product => {
       res.json(product)
     }) //return lại item
@@ -28,6 +29,8 @@ router.put(
       linkpic: body.linkpic,
       _id: params.id
     }
+    console.log(newProduct)
+
     Product.findByIdAndUpdate(params.id, newProduct, { new: true })
       .then(product => {
         res.json(product)
@@ -64,6 +67,7 @@ router.get(
     else newQuery = query
 
     Product.find({ name: { $regex: newQuery, $options: 'i' } })
+      .populate('idCategory', 'name')
       .limit(Number(objects))
       .skip(objects * (page - 1))
       .sort({ name: -1 })

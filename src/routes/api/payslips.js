@@ -1,13 +1,16 @@
 import express from 'express'
 const router = express.Router()
 
-import PaySlip from '../../models/PaySlip'
+import Payslip from '../../models/PaySlip'
 import auth from '../../middleware/auth'
 import role from '../../middleware/role'
 import Role from '../../Role'
 
 router.get('/:id', auth, role([Role.payslipManagement]), ({ params }, res) => {
-  PaySlip.findById(params.id)
+  Payslip.findById(params.id)
+    .populate('idUser', 'fullName')
+
+    .populate('idSupplier', 'name')
     .then(payslip => {
       res.json(payslip)
     })
@@ -15,7 +18,7 @@ router.get('/:id', auth, role([Role.payslipManagement]), ({ params }, res) => {
 })
 
 router.get('/', auth, role([Role.payslipManagement]), (req, res) => {
-  PaySlip.find()
+  Payslip.find()
     .then(payslip => {
       res.json(payslip)
     })
@@ -27,15 +30,16 @@ router.put(
   auth,
   role([Role.payslipManagement]),
   ({ body, params }, res) => {
-    const { idUser, idSupplier, createddate, totalAmt } = body
+    const { idUser, idSupplier, createddate, comment, totalAmt } = body
     const newPaySlip = {
       idUser,
       idSupplier,
+      comment,
       createddate,
       totalAmt,
       _id: params.id
     }
-    PaySlip.findByIdAndUpdate(params.id, newPaySlip, { new: true })
+    Payslip.findByIdAndUpdate(params.id, newPaySlip, { new: true })
       .then(payslip => {
         res.json(payslip)
       })
@@ -53,8 +57,14 @@ router.get(
     if (query === 'undefined') newQuery = ''
     else newQuery = query
 
-    PaySlip.find({ idMember: { $regex: newQuery, $options: 'i' } })
+    Payslip
+      .find
+      // { idUser: { $regex: newQuery, $options: 'i' }, }
+      ()
       .limit(Number(objects))
+      .populate('idUser', 'fullName')
+
+      .populate('idSupplier', 'name')
       .skip(objects * (page - 1))
       .sort({ createddate: -1 })
       .then(payslip => res.json(payslip))
@@ -68,7 +78,7 @@ router.get('/count/:query', ({ params }, res) => {
   if (query === 'undefined') newQuery = ''
   else newQuery = query
 
-  PaySlip.find({ idMember: { $regex: newQuery, $options: 'i' } })
+  Payslip.find()
     .countDocuments()
     .sort({ createddate: -1 })
     .then(counter => res.json(counter))
@@ -76,12 +86,13 @@ router.get('/count/:query', ({ params }, res) => {
 })
 
 router.post('/', auth, role([Role.payslipManagement]), ({ body }, res) => {
-  const { idUser, idSupplier, createddate, totalAmt, _id } = body
-  const newPaySlip = new PaySlip({
+  const { idUser, idSupplier, createddate, comment, totalAmt, _id } = body
+  const newPaySlip = new Payslip({
     _id,
     idUser,
     idSupplier,
     createddate,
+    comment,
     totalAmt
   })
 
@@ -96,7 +107,7 @@ router.delete(
   auth,
   role([Role.payslipManagement]),
   ({ params }, res) => {
-    PaySlip.findByIdAndDelete(params.id)
+    Payslip.findByIdAndDelete(params.id)
       .then(payslip => res.json(payslip))
       .catch(err => res.json(err))
   }

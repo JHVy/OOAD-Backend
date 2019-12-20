@@ -7,8 +7,9 @@ const ProductSchema = new Schema(
   {
     //Không cần thuộc tính ID vì trong MongoDB sẽ tự tạo ID cho mình khi insert vào
     idCategory: {
-      type: String, // Kiểu String
-      required: true //=> khi insert vào thì bắt buộc phải có "idCategory"
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+      ref: 'Categories'
     },
     name: {
       type: String, // Kiểu String
