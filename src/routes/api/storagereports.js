@@ -35,9 +35,9 @@ router.get('/', auth, (req, res) => {
 })
 
 router.put('/:id', auth, ({ body, params }, res) => {
-  const { idMember, idMaterial, quantity, createddate } = body
+  const { idUser, idMaterial, quantity, createddate } = body
   const newStorageReport = {
-    idMember,
+    idUser,
     idMaterial,
     quantity,
     createddate,
@@ -81,9 +81,9 @@ router.get('/count/:query', ({ params }, res) => {
 //@desc  Create a storagereport  (miểu tả APi làm gì)
 //@access Public            (access hiện tại là public vì Trung chưa tạo authentication)
 router.post('/', auth, ({ body }, res) => {
-  const { idMember, idMaterial, quantity, createddate, _id } = body
+  const { idUser, idMaterial, quantity, createddate, _id } = body
   const newStorageReport = new StorageReport({
-    idMember,
+    idUser,
     idMaterial,
     quantity,
     createddate,

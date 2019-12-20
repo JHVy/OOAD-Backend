@@ -90,7 +90,7 @@ router.delete(
 router.get(
   '/getall/:query',
   auth,
-  role(Role.materialManagement),
+  role([Role.materialManagement]),
   ({ params }, res) => {
     const { query } = params
     let newQuery = ''
