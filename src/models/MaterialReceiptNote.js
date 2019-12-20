@@ -4,12 +4,12 @@ const Schema = mongoose.Schema
 const MaterialReceiptNoteSchema = new Schema(
   {
     idSupplier: {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
       required: true,
       ref: 'Suppliers'
     },
     idUser: {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
       required: true,
       ref: 'Users'
     },

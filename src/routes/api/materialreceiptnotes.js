@@ -19,25 +19,6 @@ router.get(
   }
 )
 
-router.put(
-  '/:id',
-  auth,
-  role([Role.materialReceiptNoteManagement]),
-  ({ body, params }, res) => {
-    const newItem = {
-      idSupplier: body.idSupplier,
-      idUser: body.idUser,
-      createddate: body.createddate,
-      _id: params.id
-    }
-    MaterialReceiptNote.findByIdAndUpdate(params.id, newItem, { new: true })
-      .then(item => {
-        res.json(item)
-      })
-      .catch(err => res.json(err))
-  }
-)
-
 router.get(
   '/getall/:query',
   auth,
@@ -65,12 +46,12 @@ router.get(
     if (query === 'undefined') newQuery = ''
     else newQuery = query
 
-    MaterialReceiptNote.find({
-      idSupplier: { $regex: newQuery, $options: 'i' }
-    })
+    MaterialReceiptNote.find()
+      .populate('idSupplier', 'name')
+      .populate('idUser', 'fullName')
       .limit(Number(objects))
       .skip(objects * (page - 1))
-      .sort({ idSupplier: -1 })
+
       .then(el => res.json(el))
       .catch(err => res.json(err))
   }
@@ -82,7 +63,7 @@ router.get('/count/:query', ({ params }, res) => {
   if (query === 'undefined') newQuery = ''
   else newQuery = query
 
-  MaterialReceiptNote.find({ idSupplier: { $regex: newQuery, $options: 'i' } })
+  MaterialReceiptNote.find()
     .countDocuments()
     .sort({ idSupplier: -1 })
     .then(counter => res.json(counter))
@@ -91,7 +72,6 @@ router.get('/count/:query', ({ params }, res) => {
 
 router.post(
   '/',
-  auth,
   role([Role.materialReceiptNoteManagement]),
   ({ body }, res) => {
     const { idSupplier, idUser, createddate, _id, dets } = body

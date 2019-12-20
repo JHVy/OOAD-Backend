@@ -4,12 +4,14 @@ const Schema = mongoose.Schema
 const MaterialReceiptNoteDetSchema = new Schema(
   {
     idMaterialReceiptNote: {
-      type: String,
-      required: true
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+      ref: 'MaterialReceiptNotes'
     },
     idMaterial: {
-      type: String,
-      required: true
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+      ref: 'Materials'
     },
     quantity: {
       type: Number,
