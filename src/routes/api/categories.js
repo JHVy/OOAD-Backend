@@ -16,7 +16,7 @@ router.get('/:id', auth, role([Role.categoryManagement]), ({ params }, res) => {
 router.get(
   '/getall/:query',
   auth,
-  role(Role.categoryManagement),
+  role([Role.categoryManagement]),
   ({ params }, res) => {
     const { query } = params
     let newQuery

@@ -39,7 +39,7 @@ router.put(
 router.get(
   '/getall/:query',
   auth,
-  role(Role.productManagement),
+  role([Role.productManagement]),
   ({ params }, res) => {
     const { query } = params
     let newQuery = ''

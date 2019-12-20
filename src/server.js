@@ -23,7 +23,8 @@ import payslip from './routes/api/payslips'
 import materials from './routes/api/materials'
 import storageReports from './routes/api/storagereports'
 import invoiceDet from './routes/api/invoicedets'
-import reciepts from './routes/api/reciepts'
+import reciepts from './routes/api/materialreceiptnotes'
+import recieptdets from './routes/api/materialreceiptnotedets'
 
 const app = express()
 
@@ -117,8 +118,8 @@ app.use('/api/user', users)
 app.use('/api/material', materials)
 app.use('/api/storagereport', storageReports)
 app.use('/api/invoicedet', invoiceDet)
-app.use('/api/product', product)
-app.use('/api/reciept', reciepts)
+app.use('/api/receipt', reciepts)
+app.use('/api/receiptdet', recieptdets)
 
 const port = process.env.PORT || 5000
 

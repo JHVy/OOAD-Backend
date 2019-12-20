@@ -7,20 +7,19 @@ import role from '../../middleware/role'
 import Role from '../../Role'
 
 router.get(
-  '/search/:query',
+  '/getall/:query',
   auth,
   role([Role.supplierManagement]),
-
   ({ params }, res) => {
     const { query } = params
-
+    let newQuery = ''
     if (query === 'undefined') newQuery = ''
     else newQuery = query
 
-    Member.find({ name: { $regex: newQuery, $options: 'i' } })
-      .sort({ createAt: -1 })
-      .then(supplier => res.json(supplier))
-      .catch(err => res.json(err))
+    Supplier.find()
+      .sort({ name: -1 }) //desc = -1 acs = 1
+      .then(supplier => res.json(supplier)) //return lại item
+      .catch(err => res.json(err)) //Catch lỗi rồi return ra;
   }
 )
 
