@@ -74,7 +74,8 @@ router.post('/', auth, role([Role.invoiceManagement]), ({ body }, res) => {
     idUser: body.idUser,
     totalAmt: body.totalAmt,
     createddate: body.createddate,
-    comments: body.comments
+    comments: body.comments,
+    status: body.status
   })
 
   newInvoice

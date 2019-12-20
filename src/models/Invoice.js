@@ -7,12 +7,14 @@ const InvoiceSchema = new Schema(
   {
     //Không cần thuộc tính ID vì trong MongoDB sẽ tự tạo ID cho mình khi insert vào
     idMember: {
-      type: String,
-      required: true
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+      ref: 'Members'
     },
     idUser: {
-      type: String,
-      required: true
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+      ref: 'Users'
     },
     totalAmt: {
       type: Number,

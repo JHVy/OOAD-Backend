@@ -24,6 +24,19 @@ router.get(
   }
 )
 
+router.get(
+  '/getall/supply',
+  auth,
+  role([Role.supplierManagement, Role.payslipManagement]),
+  (req, res) => {
+    Supplier.find()
+      .sort({ createAt: -1 }) //desc = -1 acs = 1
+      .select('name')
+      .then(roles => res.json(roles)) //return lại item
+      .catch(err => res.json(err)) //Catch lỗi rồi return ra;
+  }
+)
+
 router.get('/:id', auth, role([Role.supplierManagement]), ({ params }, res) => {
   Supplier.findById(params.id)
     .then(supplier => {

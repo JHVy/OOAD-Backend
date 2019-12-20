@@ -79,7 +79,8 @@ db.once('open', () => {
             const admin = new User({
               username: 'admin',
               idRole: roleID,
-              password: 'admin'
+              password: 'admin',
+              fullName: 'admin'
             })
             bcrypt.genSalt(10, (err, salt) => {
               bcrypt.hash(admin.password, salt, (err, hash) => {

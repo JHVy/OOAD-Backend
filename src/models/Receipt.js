@@ -3,8 +3,9 @@ const Schema = mongoose.Schema
 
 var ItemSchema = new mongoose.Schema({
   idMaterial: {
-    type: String,
-    required: true
+    type: mongoose.Schema.Types.ObjectId,
+    required: true,
+    ref: 'Materials'
   },
   name: {
     type: String,
