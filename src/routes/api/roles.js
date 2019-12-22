@@ -30,7 +30,7 @@ router.put(
       materialManagement,
       roleManagement,
       materialReceiptNoteManagement
-    } = req.body
+    } = body
     const newRole = {
       _id: params.id,
       name,

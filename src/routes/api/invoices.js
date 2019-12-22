@@ -54,6 +54,17 @@ router.get(
       .catch(err => res.json(err))
   }
 )
+router.get(
+  '/getall/:query',
+  auth,
+  role([Role.invoiceManagement]),
+  ({ params }, res) => {
+    Material.find()
+      .sort({ name: -1 })
+      .then(el => res.json(el))
+      .catch(err => res.json(err))
+  }
+)
 
 router.get('/count/:query', ({ params }, res) => {
   const { query } = params

@@ -12,7 +12,7 @@ router.get('/search/:query', ({ params }, res) => {
   if (query === 'undefined') newQuery = ''
   else newQuery = query
 
-  StorageReport.find({ idMaterial: { $regex: newQuery, $options: 'i' } })
+  StorageReport.find()
     .sort({ createddate: -1 }) //desc = -1 acs = 1
     .then(storagereport => res.json(storagereport)) //return lại item
     .catch(err => res.json(err)) //Catch lỗi rồi return ra;
