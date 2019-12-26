@@ -59,7 +59,7 @@ router.get(
   auth,
   role([Role.invoiceManagement]),
   ({ params }, res) => {
-    Material.find()
+    Invoice.find()
       .sort({ name: -1 })
       .then(el => res.json(el))
       .catch(err => res.json(err))

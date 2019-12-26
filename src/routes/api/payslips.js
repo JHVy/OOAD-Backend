@@ -66,7 +66,7 @@ router.get(
 
       .populate('idSupplier', 'name')
       .skip(objects * (page - 1))
-      .sort({ createddate: -1 })
+      //.sort({ createddate: -1 })
       .then(payslip => res.json(payslip))
       .catch(err => res.json(err))
   }
