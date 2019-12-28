@@ -33,6 +33,10 @@ const InvoiceSchema = new Schema(
     status: {
       type: Number,
       default: 1
+    },
+    discount: {
+      type: Number,
+      default: 0
     }
   },
   { collection: 'Invoices' }

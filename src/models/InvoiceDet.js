@@ -25,10 +25,6 @@ const InvoiceDetSchema = new Schema(
       type: Number,
       required: true,
       default: 0
-    },
-    discount: {
-      type: Number,
-      required: false
     }
   },
   { collection: 'InvoiceDets' }

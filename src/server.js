@@ -25,6 +25,7 @@ import storageReports from './routes/api/storagereports'
 import invoiceDet from './routes/api/invoicedets'
 import reciepts from './routes/api/materialreceiptnotes'
 import recieptdets from './routes/api/materialreceiptnotedets'
+import parameters from './routes/api/parameters'
 
 const app = express()
 
@@ -121,6 +122,7 @@ app.use('/api/storagereport', storageReports)
 app.use('/api/invoicedet', invoiceDet)
 app.use('/api/receipt', reciepts)
 app.use('/api/receiptdet', recieptdets)
+app.use('/api/parameter', parameters)
 
 const port = process.env.PORT || 5000
 

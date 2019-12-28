@@ -33,13 +33,12 @@ router.get('/getall/:query', ({ params }, res) => {
 })
 
 router.put('/:id', ({ body, params }, res) => {
-  const { idInvoice, idProduct, price, quantity, discount } = body
+  const { idInvoice, idProduct, price, quantity } = body
   const newInvoiceDet = {
     idInvoice,
     idProduct,
     price,
     quantity,
-    discount,
     _id: params._id
   }
   InvoiceDet.findByIdAndUpdate(params._id, newInvoiceDet, { new: true })
@@ -77,13 +76,12 @@ router.get('/count/:query', ({ params }, res) => {
 })
 
 router.post('/', ({ body }, res) => {
-  const { idInvoice, idProduct, price, quantity, discount, _id } = body
+  const { idInvoice, idProduct, price, quantity, _id } = body
   const newInvoiceDet = new InvoiceDet({
     idInvoice,
     idProduct,
     price,
     quantity,
-    discount,
     _id
   })
 

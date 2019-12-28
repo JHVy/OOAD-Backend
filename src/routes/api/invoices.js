@@ -27,6 +27,8 @@ router.put(
       totalAmt: body.totalAmt,
       createddate: body.createddate,
       comments: body.comments,
+      discount: body.discount,
+      status: body.status,
       _id: params.id
     }
     Invoice.findByIdAndUpdate(params.id, newInvoice, { new: true })
@@ -87,7 +89,8 @@ router.post('/', auth, role([Role.invoiceManagement]), ({ body }, res) => {
     totalAmt: body.totalAmt,
     createddate: body.createddate,
     comments: body.comments,
-    status: body.status
+    status: body.status,
+    discount: body.discount
   })
 
   newInvoice

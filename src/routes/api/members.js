@@ -115,4 +115,17 @@ router.delete(
   }
 )
 
+router.put(
+  '/point/:id',
+  auth,
+  role([Role.memberManagement]),
+  ({ body }, res) => {
+    Member.findByIdAndUpdate(body._id, { point: body.point }, { new: true })
+      .then(member => {
+        res.json(member)
+      })
+      .catch(err => res.json(err))
+  }
+)
+
 export default router
